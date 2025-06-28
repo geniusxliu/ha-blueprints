@@ -68,11 +68,12 @@ blueprint:
 mode: single
 
 variables:
-  temperature_sensor_id: !input temperature_sensor
   climate_entity_id: !input climate_entity
   extra_entities_ids: !input extra_entities
   notify_device_id: !input notify_device
   schedule_days: !input schedule_days
+  temperature_sensor_id: !input temperature_sensor
+  current_temp: "{{ states(temperature_sensor_id) }}"
 
 trigger:
   - platform: time
@@ -83,14 +84,14 @@ condition:
     value_template: >-
       {{ now().strftime('%a') | lower in schedule_days }}
   - condition: numeric_state
-    entity_id: "{{ temperature_sensor_id }}"
+    entity_id: !input temperature_sensor
     above: !input temperature_threshold
 
 action:
   - service: "notify.mobile_app_{{ device_attr(notify_device_id, 'name') | lower | replace(' ', '_') }}"
     data:
       message: >-
-        現在室溫是 {{ states(temperature_sensor_id) }}°C，
+        現在室溫是 {{ current_temp }}°C，
         要開冷氣嗎？
       title: "冷氣提示"
       data:

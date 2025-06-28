@@ -72,6 +72,7 @@ variables:
   climate_entity_id: !input climate_entity
   extra_entities_ids: !input extra_entities
   notify_device_id: !input notify_device
+  schedule_days: !input schedule_days
 
 trigger:
   - platform: time
@@ -80,7 +81,7 @@ trigger:
 condition:
   - condition: template
     value_template: >-
-      {{ now().strftime('%a') | lower in !input.schedule_days }}
+      {{ now().strftime('%a') | lower in schedule_days }}
   - condition: numeric_state
     entity_id: "{{ temperature_sensor_id }}"
     above: !input temperature_threshold

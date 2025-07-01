@@ -1,10 +1,11 @@
 blueprint:
-  name: 睡覺模式：一鍵關燈關電 + 洗碗機門提醒
+  name: 睡覺模式：一鍵關燈關電 + 關冷氣 + 洗碗機門提醒
   description: >
     當 input_boolean.sleep_mode 被打開時：
-    1. 關閉所有指定電器
-    2. 如果洗碗機門沒開，廣播提醒
-    3. 自動把 input_boolean 重設為關閉
+    1. 關閉所有指定 switch 和 light
+    2. 關閉所有指定冷氣（climate）
+    3. 如果洗碗機門沒開，播語音提醒
+    4. 自動把 input_boolean 關閉（像按鈕）
 
   domain: automation
   input:
@@ -15,19 +16,24 @@ blueprint:
           domain: input_boolean
 
     targets_to_turn_off:
-      name: 要關閉的電器（switch 或 light）
+      name: 要關閉的電器（switch / light）
       selector:
         target:
           entity:
             domain:
               - switch
               - light
-              - fan
-              - climate
+
+    aircons_to_turn_off:
+      name: 要關閉的冷氣（climate）
+      selector:
+        target:
+          entity:
+            domain: climate
 
     dishwasher_door_sensor:
-      name: 洗碗機門狀態感測器（binary_sensor）
-      description: 門打開時為 on，關閉為 off
+      name: 洗碗機門感測器（binary_sensor）
+      description: 開為 on，關為 off
       selector:
         entity:
           domain: binary_sensor
@@ -54,6 +60,9 @@ trigger:
 action:
   - service: homeassistant.turn_off
     target: !input targets_to_turn_off
+
+  - service: climate.turn_off
+    target: !input aircons_to_turn_off
 
   - condition: state
     entity_id: !input dishwasher_door_sensor

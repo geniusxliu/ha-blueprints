@@ -1,10 +1,10 @@
 blueprint:
   name: 睡覺模式：一鍵關燈關電 + 洗碗機門提醒
   description: >
-    當指定的 input_boolean 被打開（通常代表「我要睡覺」），
-    1. 關閉所有指定的 switch 與 light。
-    2. 檢查洗碗機門是否開啟（binary_sensor）
-    3. 如果沒開，用 TTS 廣播提醒。
+    當 input_boolean.sleep_mode 被打開時：
+    1. 關閉所有指定電器
+    2. 如果洗碗機門沒開，廣播提醒
+    3. 自動把 input_boolean 重設為關閉
 
   domain: automation
   input:
@@ -22,6 +22,7 @@ blueprint:
             domain:
               - switch
               - light
+              - fan
 
     dishwasher_door_sensor:
       name: 洗碗機門狀態感測器（binary_sensor）
@@ -61,3 +62,9 @@ action:
     data:
       entity_id: !input tts_speaker
       message: !input tts_message
+
+  - delay: "00:00:02"
+
+  - service: input_boolean.turn_off
+    target:
+      entity_id: !input trigger_input_boolean

@@ -23,6 +23,7 @@ blueprint:
               - switch
               - light
               - fan
+              - climate
 
     dishwasher_door_sensor:
       name: 洗碗機門狀態感測器（binary_sensor）

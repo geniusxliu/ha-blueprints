@@ -21,8 +21,8 @@ blueprint:
         target:
           entity:
             domain:
-              - switch
               - light
+              - fan
 
     aircons_to_turn_off:
       name: 要關閉的冷氣（climate）

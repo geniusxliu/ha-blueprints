@@ -68,7 +68,7 @@ action:
     entity_id: !input dishwasher_door_sensor
     state: 'off'
 
-  - service: tts.google_translate_say
+  - service: tts.edge_hsiaochen
     data:
       entity_id: !input tts_speaker
       message: !input tts_message
